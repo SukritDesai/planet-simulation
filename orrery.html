@@ -1,42 +1,21 @@
-<!--&lt;!&ndash;<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>Solar System Simulation</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--&ndash;&gt;-->
-
-<!--    &lt;!&ndash; Makes the container to hold both the background (space) and the foreground (the sun)&ndash;&gt;-->
-<!--<div id="container" style="width: 350px; height: 350px; position: absolute; top:50%;transform: translate(-50%, -50%);"> -->
-<!--    &lt;!&ndash; The background layer. The z index is 0 because it should be at the bottom of the stack&ndash;&gt;-->
-<!--        <canvas id="background_layer" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>-->
-<!--        &lt;!&ndash; The foreground layer. The z index is 1 because it should be above the background&ndash;&gt;-->
-<!--        <canvas id="foreground_layer" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>-->
-<!--    </div>-->
-<!--    &lt;!&ndash; Our Javascript code &ndash;&gt;-->
-<!--    <script type="text/javascript" src="create_canvas.js"></script>-->
-<!--</body>-->
-<!--</html>-->
-
-<HTML>
-<HEAD>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-</HEAD>
-<BODY>
-<!-- CREATE CONTAINER TO HOLD BOTH CANVASES -->
-<div id="CONTAINER" style="width:350px;height:350px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
-
-    <!-- BACKGROUND LAYER (Z-INDEX 0) -->
-    <canvas id="LAYER_BACKGROUND_T2" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 0;">
-    </canvas>
-    <!-- FOREGROUND LAYER (Z-INDEX 1) -->
-    <canvas id="LAYER_FOREGROUND_T2" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 1;">
-    </canvas>
-
-</div>
-<!-- JAVASCRIPT CODE -->
-<script type="text/javascript" src="T2_createLayeredCanvas.js">
-</script>
-</BODY>
-</HTML>
+    <title>Solar System Simulation</title>
+</head>
+<body>
+    <!-- Makes the container to hold both the background (space and the sun) and the foreground (the text values like FPS)-->
+    <div id="container" style="width: 350px; height: 350px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <!-- The background layer. The z index is 0 because it should be at the bottom of the stack-->
+        <canvas id="background_layer" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+        <!-- The foreground layer. The z index is 1 because it should be above the background-->
+        <canvas id="foreground_layer" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+        <canvas id="days" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 2"></canvas>
+        <canvas id="orbital_elements" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 3"></canvas>
+        <canvas id="planets" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 4"></canvas>
+    </div>
+    <!-- Our Javascript code -->
+    <script type="text/javascript" src="create_canvas.js"></script>
+</body>
+</html>
