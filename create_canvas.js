@@ -1,3 +1,12 @@
+/*
+* Name: Sukrit and Kevin
+* Date: Dec 19 - 23 2022
+* Teacher: Mr Gugoiu
+* IDE: IntelliJ IDEA
+* Description: The source file for each layer of the simulation, the bottom half is helper functions for the Keplerian elements.
+* */
+
+
 const Sun = {
     // Define background canvas
     canvas_background: document.getElementById('background_layer'), //Grab the HTML5 Background Canvas (will only be drawn once)
@@ -111,4 +120,62 @@ function renderForeground_Sun(){
     Sun.contextforeground.textAlign = "right";
     Sun.contextforeground.fillStyle = "white";
     Sun.contextforeground.fillText("TPS = "+ Sun.avgTPSCount,Sun.width-10,20);
+}
+
+const year_length = 365.256898326;
+// Helpers to determine position
+function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+}
+
+function rad2deg(rad) {
+    return rad * (Math.PI / 180);
+}
+
+function rev(x) {
+    return x - Math.floor(x / 360) * 360;
+}
+
+function perihelion_distance(a, e) {
+    return a * (1 - e);
+}
+
+function aphelion_distance(a, e) {
+    return a * (1 + e);
+}
+
+function orbital_period(a, m) {
+    return this.year_length * a ** 1.5 / Math.sqrt(1 + m);
+}
+
+function daily_motion(P) {
+    return 360 / P;
+}
+
+function days(y, m, D) {
+    return 367 * y - 7 * (y + (m+9) /12 ) / 4 - 3 * ((y + (m-9)/7 ) / 100 + 1) / 4 + 275 * m/9 + D - 730515
+}
+
+function ptime() {
+
+}
+
+function mean_anomaly(t, T, P) {
+    return (t - T) * 360 / P;
+}
+
+function mean_longitude(M, w, N) {
+    return M + w + N;
+}
+
+function ecc_anomaly() {
+
+}
+
+function true_anomaly() {
+
+}
+
+function hel_distance() {
+
 }

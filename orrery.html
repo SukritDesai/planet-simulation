@@ -11,8 +11,11 @@
         <canvas id="background_layer" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
         <!-- The foreground layer. The z index is 1 because it should be above the background-->
         <canvas id="foreground_layer" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+        <!-- Layer to display the current year in the simulation-->
         <canvas id="days" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 2"></canvas>
+        <!-- Layer to calculate the Keplerian elements for the planets-->
         <canvas id="orbital_elements" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 3"></canvas>
+        <!-- Layer to draw the actual planets-->
         <canvas id="planets" width="350" height="350" style="position: absolute; left: 0; top: 0; z-index: 4"></canvas>
     </div>
     <!-- Our Javascript code -->
