@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=600">
+    <title>Celestial Body Simulator</title>
+</head>
+<body style="font-family:sans-serif; font-size:15px;
+        margin-left:auto; margin-right:auto; background-color:#d0d6d0;">
+<h1 style="font-size:24px; text-align:center;">Celestial Body Simulator</h1>
+<div class="flex-container" style="display: flex">
+    <div style="padding: 30px">
+        <form>
+            <label for="orbRadius">Orbital Radius:</label><br>
+            <input type="text" id="orbRadius" name="orbRadius"><br><br>
+            <label for="planetSpeed">Planet Speed:</label><br>
+            <input type="text" id="planetSpeed" name="planetSpeed"><br><br>
+            <label for="mass">Mass:</label><br>
+            <input type="text" id="mass" name="mass"><br><br>
+            <label for="radius">Planet Radius:</label><br>
+            <input type="text" id="radius" name="radius"><br><br>
+            <label for="trailColor">Trail Color:</label><br>
+            <input type="color" id="trailColor" name="trailColor" value="#e66465"><br><br>
+            <label for="planetGradient1"> Planet Gradient Base Color:</label><br>
+            <input type="color" id="planetGradient1" name="planetGradient1" value="#e66465"><br><br>
+            <label for="planetGradient2">Planet Gradient Accent Color:</label><br>
+            <input type="color" id="planetGradient2" name="planetGradient2" value="#e66465"><br><br>
+            <label for="addPlanet"></label><br>
+            <button type="button" id="addPlanet" name="addPlanet" >Add Planet</button>
+        </form>
+    </div>
+
+    <div style="width:800px; margin-left:auto; margin-right:auto; position:relative;">
+        Speed:
+        <label for="speedSlider"></label><input id="speedSlider" type="range" min="1" max="100" value="10" ><br>
+        <canvas id="trailCanvas" width="800" height="600" style="position:absolute;"></canvas>
+        <canvas id="theCanvas" width="800" height="600" style="position:relative;">
+        </canvas>
+        <div style="text-align: center;">
+            <div id="buttons">
+                <input type="button" id="play" value="Play" onclick="play()">
+                <input type="button" id="pause" value="Pause" onclick="pause()">
+                <input type="button" id="reset" value="Reset" onclick="reset()">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let runFlag;
+    function play() {
+        window.clearTimeout(timer);
+        runFlag = 1;
+        runMotion();
+
+    }
+    function pause() {
+        window.clearTimeout(timer);
+        runFlag = 0;
+
+    }
+    function reset() {
+        window.clearTimeout(timer);
+        for (let i = 0; i<=nPlanets; i++){
+            planet[i].x = planet[i].orbitalRadius;
+            planet[i].y = 0;
+            planet[i].vx = 0;
+            planet[i].vy = planet[i].speed;
+        }
+        trailContext.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        trailContext.fillStyle = "black";
+        trailContext.fillRect(0, 0, theCanvas.width, theCanvas.height);
+        timeInDays = 0;
+
+    }
+
+    let theCanvas = document.getElementById("theCanvas");
+    // for drawing the projectile
+    let theContext = theCanvas.getContext("2d");
+    let trailCanvas = document.getElementById("trailCanvas");
+    // for drawing trails
+    let trailContext = trailCanvas.getContext("2d");
+    // meters per second
+    let centerX = 0;
+    let centerY = 2e11;
+    // position and velocity
+    let timer;
+    // for animation timing
+    let nPlanets = 6;
+    // number of planets
+    document.getElementById('addPlanet').onclick = function() {
+        nPlanets++;
+        planet[nPlanets] = {};
+        planet[nPlanets].orbitalRadius = document.getElementById('orbRadius').value;
+        // radius in meters
+        planet[nPlanets].speed = document.getElementById('planetSpeed').value;
+        // speed in meters per second
+        planet[nPlanets].x = planet[0].orbitalRadius;
+        planet[nPlanets].y = 0;
+        planet[nPlanets].vx = 0;
+        planet[nPlanets].vy = planet[0].speed;
+        planet[nPlanets].trailColor = document.getElementById('trailColor').value;
+        planet[nPlanets].gradient0 = document.getElementById('planetGradient2').value;
+        planet[nPlanets].gradient1 = document.getElementById('planetGradient1').value;
+        planet[nPlanets].radius = document.getElementById('radius').value;
+        planet[nPlanets].mass = document.getElementById('mass').value;
+    };
+    let planet = new Array(1000);
+
+    planet[0] = {};
+    planet[0].orbitalRadius = 1.49e11;
+    // radius in meters
+    planet[0].speed = 0.8 * 3.0e4;
+    // speed in meters per second
+    planet[0].x = planet[0].orbitalRadius;
+    planet[0].y = 0;
+    planet[0].vx = 0;
+    planet[0].vy = planet[0].speed;
+    planet[0].trailColor = "#8888ff";
+    planet[0].gradient0 = "#d0d0ff";
+    planet[0].gradient1 = "#0000ff";
+    planet[0].radius = 10;
+    planet[0].mass = 5.972*10^24;
+
+    planet[1] = {};
+    planet[1].orbitalRadius = 1.49e11;
+    // radius in meters
+    planet[1].speed = 3.0e4;
+    // speed in meters per second
+    planet[1].x = planet[1].orbitalRadius;
+    planet[1].y = 0;
+    planet[1].vx = 0;
+    planet[1].vy = planet[1].speed;
+    planet[1].trailColor = "#8888ff";
+    planet[1].gradient0 = "#d0d0ff";
+    planet[1].gradient1 = "#0000ff";
+    planet[1].radius = 10;
+    planet[1].mass = 5.972*10^24;
+
+    planet[2] = {};
+    planet[2].orbitalRadius = 1.49e11;
+    // radius in meters
+    planet[2].speed = 1.2 * 3.0e4;
+    // speed in meters per second
+    planet[2].x = planet[2].orbitalRadius;
+    planet[2].y = 0;
+    planet[2].vx = 0;
+    planet[2].vy = planet[2].speed;
+    planet[2].trailColor = "#8888ff";
+    planet[2].gradient0 = "#d0d0ff";
+    planet[2].gradient1 = "#0000ff";
+    planet[2].radius = 10;
+    planet[2].mass = 5.972*10^24;
+
+    planet[3] = {};
+    planet[3].orbitalRadius = 1.49e11;
+    // radius in meters
+    planet[3].speed = Math.sqrt(2.0) * 3.0e4;
+    // speed in meters per second
+    planet[3].x = planet[3].orbitalRadius;
+    planet[3].y = 0;
+    planet[3].vx = 0;
+    planet[3].vy = planet[3].speed;
+    planet[3].trailColor = "#8888ff";
+    planet[3].gradient0 = "#d0d0ff";
+    planet[3].gradient1 = "#0000ff";
+    planet[3].radius = 10;
+    planet[3].mass = 5.972*10^24;
+
+    planet[4] = {};
+    planet[4].orbitalRadius = -1.0e11;
+    // radius in meters
+    planet[4].speed = 1.5 * 3.0e4;
+    // speed in meters per second
+    planet[4].x = planet[4].orbitalRadius;
+    planet[4].y = 0;
+    planet[4].vx = 0;
+    planet[4].vy = planet[4].speed;
+    planet[4].trailColor = "#ffd000";
+    planet[4].gradient0 = "#d0d0ff";
+    planet[4].gradient1 = "#cc9900";
+    planet[4].radius = 10;
+    planet[4].mass = 5.972*10^24;
+
+    planet[5] = {};
+    planet[5].orbitalRadius = -1.4e11;
+    // radius in meters
+    planet[5].speed = 1e5;
+    // speed in meters per second
+    planet[5].x = planet[5].orbitalRadius;
+    planet[5].y = 0;
+    planet[5].vx = 0;
+    planet[5].vy = planet[5].speed;
+    planet[5].trailColor = "#ffd000";
+    planet[5].gradient0 = "#d0d0ff";
+    planet[5].gradient1 = "#cc9900";
+    planet[5].radius = 10;
+    planet[5].mass = 5.972*10^24;
+
+    planet[6] = {};
+    planet[6].orbitalRadius = 0;
+    // radius in meters
+    planet[6].speed = 0;
+    // speed in meters per second
+    planet[6].x = planet[6].orbitalRadius;
+    // the Sun
+    planet[6].y = 0;
+    planet[6].vx = 0;
+    planet[6].vy = planet[6].speed;
+    planet[6].trailColor = "#ffd000";
+    planet[6].gradient0 = "#d0d0ff";
+    planet[6].gradient1 = "#cc9900";
+    planet[6].radius = 18;
+    planet[6].mass = 2.0e+30;
+
+    let timeInDays = 0;
+    let drawIndex = 0;
+    let newtonG = 2e-11;
+
+    trailContext.fillStyle = "black";
+    trailContext.fillRect(0, 0, theCanvas.width, theCanvas.height);
+
+    // Move the planet by a single time step and schedule next move:
+    function runMotion() {
+        let speedSlider = document.getElementById("speedSlider");
+        let dt = speedSlider.value*2000;
+        // time step in seconds
+        let r;
+        let accel;
+        let ax;
+        let ay;
+        let bKmPerPixel = 1.6;
+        function dist(x1, y1, x2, y2) {
+            const xDist = x2 - x1;
+            const yDist = y2 - y1;
+            return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))*(bKmPerPixel);
+        }
+
+        for (let i = 0; i <= nPlanets; i++) {
+            console.log(i)
+            for (let h = 0; h <= nPlanets; h++){
+                r = dist(planet[i].x, planet[i].y, planet[h].x, planet[h].y);
+
+                accel = newtonG * ((planet[h].mass*planet[i].mass) / (r * r));
+                if (accel===Infinity) accel=0;
+
+                ax = -accel * planet[i].x / r;
+                if (isNaN(ax)) ax=0;
+
+                ay = -accel * planet[i].y / r;
+                if (isNaN(ay)) ay=0;
+
+                planet[i].vx += ax * dt;
+                planet[i].vy += ay * dt;
+            }
+
+            // magnitude of the acceleration
+            planet[i].x += planet[i].vx * dt;
+            planet[i].y += planet[i].vy * dt;
+        }
+        timeInDays = timeInDays + dt / 86400;
+        drawMotion();
+        timer = window.setTimeout(runMotion, 10 / 30);
+
+        // Draw each planet at its current location, and add a dot to the trail:
+        function drawMotion() {
+            theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
+
+            let metersPerPixel = 1.6e9;
+
+            drawIndex = -1;
+            let theGradient;
+            let pixelX;
+            let pixelY;
+            for (let index = nPlanets; index >= 0; index--) {
+                pixelX = theCanvas.width / 2 + (planet[index].x - centerX) / metersPerPixel;
+                pixelY = theCanvas.height / 2 - 40 - (planet[index].y - centerY) / metersPerPixel;
+                theContext.beginPath();
+                theContext.arc(pixelX, pixelY, planet[index].radius, 0, 2 * Math.PI);
+                theGradient = theContext.createRadialGradient(pixelX - 1, pixelY - 2, 1, pixelX, pixelY, planet[index].radius);
+                theGradient.addColorStop(0, planet[index].gradient0);
+                theGradient.addColorStop(1, planet[index].gradient1);
+                theContext.fillStyle = theGradient;
+                theContext.fill();
+                trailContext.fillStyle = planet[index].trailColor;
+                trailContext.fillRect(pixelX - 0.5, pixelY - 0.5, 1, 1);
+            }
+
+            theContext.font = '18pt Calibri';
+            theContext.fillStyle = 'lightgray';
+            let timeLabel = ' days ';
+            timeLabel = timeInDays.toFixed(1) + timeLabel;
+            theContext.fillText(timeLabel, 20, 20);
+        }
+    }
+</script>
+</body>
+</html>
