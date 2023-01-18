@@ -5,19 +5,53 @@
     <meta name="viewport" content="width=600">
     <title>Celestial Body Simulator</title>
 </head>
+<div class="topnav">
+    <a  href="index1.html">Homepage</a>
+    <a href="index2.html">Solar System Simulator</a>
+    <a class="active" href="index.html">Celestial Body Simulator</a>
+</div>
+<style>
+.topnav {
+    overflow: hidden;
+    background-color: #333;
+}
+
+.topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 50px;
+    text-decoration: none;
+    font-size: 17px;
+    margin-right: 250px;
+    font-family: sans-serif;
+}
+
+.topnav a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.topnav a.active {
+    background-color: #04AA6D;
+    color: white;
+}
+</style>
+
+
 <body style="font-family:sans-serif; font-size:15px;
         margin-left:auto; margin-right:auto; background-color:#d0d6d0;">
 <h1 style="font-size:24px; text-align:center;">Celestial Body Simulator</h1>
 <div class="flex-container" style="display: flex">
     <div style="padding: 30px">
         <form>
-            <label for="orbRadius">Orbital Radius:</label><br>
+            <label for="orbRadius">Orbital Radius:</label> <span title="explanation">🛈</span><br>
             <input type="text" id="orbRadius" name="orbRadius"><br><br>
-            <label for="planetSpeed">Planet Speed:</label><br>
+            <label for="planetSpeed">Planet Speed:</label><span title="explanation">🛈</span><br>
             <input type="text" id="planetSpeed" name="planetSpeed"><br><br>
-            <label for="mass">Mass:</label><br>
+            <label for="mass">Mass:</label><span title="explanation">🛈</span><br>
             <input type="text" id="mass" name="mass"><br><br>
-            <label for="radius">Planet Radius:</label><br>
+            <label for="radius">Planet Radius:</label><span title="explanation">🛈</span><br>
             <input type="text" id="radius" name="radius"><br><br>
             <label for="trailColor">Trail Color:</label><br>
             <input type="color" id="trailColor" name="trailColor" value="#e66465"><br><br>
@@ -26,15 +60,16 @@
             <label for="planetGradient2">Planet Gradient Accent Color:</label><br>
             <input type="color" id="planetGradient2" name="planetGradient2" value="#e66465"><br><br>
             <label for="addPlanet"></label><br>
-            <button type="button" id="addPlanet" name="addPlanet" >Add Planet</button>
+            <button type="button" id="addPlanet" name="addPlanet" >Add Planet</button><br><br><br><br>
+            <button type="button" id="removePlanet" name="addPlanet" >Remove Planet</button>
         </form>
     </div>
 
     <div style="width:800px; margin-left:auto; margin-right:auto; position:relative;">
         Speed:
         <label for="speedSlider"></label><input id="speedSlider" type="range" min="1" max="100" value="10" ><br>
-        <canvas id="trailCanvas" width="800" height="600" style="position:absolute;"></canvas>
-        <canvas id="theCanvas" width="800" height="600" style="position:relative;">
+        <canvas id="trailCanvas" width="900" height="550" style="position:absolute;"></canvas>
+        <canvas id="theCanvas" width="900" height="550" style="position:relative;">
         </canvas>
         <div style="text-align: center;">
             <div id="buttons">
@@ -47,6 +82,11 @@
 </div>
 
 <script>
+    let mousePos = {
+        x: null,
+        y: null
+    }
+
     let runFlag;
     function play() {
         window.clearTimeout(timer);
@@ -277,6 +317,11 @@
                 pixelY = theCanvas.height / 2 - 40 - (planet[index].y - centerY) / metersPerPixel;
                 theContext.beginPath();
                 theContext.arc(pixelX, pixelY, planet[index].radius, 0, 2 * Math.PI);
+                theContext.strokeStyle = "white";
+                let selected = 6;
+                if (planet[index] === selected) {
+                    theContext.stroke();
+                }
                 theGradient = theContext.createRadialGradient(pixelX - 1, pixelY - 2, 1, pixelX, pixelY, planet[index].radius);
                 theGradient.addColorStop(0, planet[index].gradient0);
                 theGradient.addColorStop(1, planet[index].gradient1);
