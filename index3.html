@@ -39,8 +39,34 @@
     background-color: #04AA6D;
     color: white;
   }
+  p, h1, h2{
+      margin: 30px;
+  }
 
 </style>
 
+<h1>
+    Celestial Body Simulator Explanation:
+</h1>
+<h2>
+    Adding a Planet:
+</h2>
+<p>
+    To add a planet you must enter the following information:
+</p>
+<ul>
+    <li>Orbital radius to show the initial distance away from the center of the canvas</li>
+    <li>Planet speed to show how fast the planet is moving forward to keep the planet in motion</li>
+    <li>The mass or weight of the planet to see how affected by other planets would be</li>
+    <li>Planet radius for how big the planet will appear and some colour options so you can identify the planet</li>
+</ul>
+
+<h2>The Physics:</h2>
+<ul>
+    <li>The distance between 2 celestial objects is calculated through the pythagorean theorem</li>
+    <li>Next, we use the Newton's law of universal gravitation which is shown through:</li> <img src="img.png"><br> The F is the force is calculated by finding the two masses m1 and m2 and dividing it by the distance between them. Then you multiply it by the gravitational constant to find the force.<br><br>
+    <li>The distance is converted from pixels to billions of kilometers throughout the formula</li>
+    <li>Then the speed of the simulation is checked from the user input and calculated into the program</li>
+</ul>
 </body>
 </html>
