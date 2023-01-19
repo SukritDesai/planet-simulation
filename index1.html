@@ -5,66 +5,53 @@
     <title>Homepage</title>
 </head>
 
-<div class="topnav">
-    <a class="active" href="index1.html">Homepage</a>
-    <a href="index2.html">Solar System Simulator</a>
-    <a href="index.html">Celestial Body Simulator</a>
-    <a href="index3.html">Physics Explanation</a>
-</div>
+<!--<div class="topnav">-->
+<!--    <a class="active" href="index1.html">Homepage</a>-->
+<!--    <a href="index2.html">Solar System Simulator</a>-->
+<!--    <a href="index.html">Celestial Body Simulator</a>-->
+<!--    <a href="index3.html">Physics Explanation</a>-->
+<!--</div>-->
+
 <style>
-    .topnav {
-        overflow: hidden;
-        background-color: #333;
+    body {
+        background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/800px-Mercury_in_true_color.jpg");
+        height: 500px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: relative;
     }
-
-    .topnav a {
-        float: left;
-        color: #f2f2f2;
-        text-align: center;
-        padding: 14px 50px;
-        text-decoration: none;
-        font-size: 17px;
-        margin-right: 220px;
-        font-family: sans-serif;
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 600px;
+        margin-right: 10px;
     }
-
-    .topnav a:hover {
-        background-color: #ddd;
-        color: black;
+    .center{
+        transition-duration: 0.4s;
     }
-
-    .topnav a.active {
-        background-color: #04AA6D;
+    button:hover {
+        background-color: #4CAF50; /* Green */
         color: white;
+    }
+    button{
+        height: 80px;
+        width: 400px;
+        margin-right: 30px;
+        border-radius: 12px;
+        stroke: white;
+        font-size: 30px;
     }
 </style>
 <body style="font-family:sans-serif; font-size:15px; margin-left:auto; margin-right:auto; margin-top: auto; background-color:#d0d6d0;">
-<section style="background-color:black;">
-    <img class="mySlides" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/800px-Mercury_in_true_color.jpg" style="width:50%; height: 700px; margin-left: 400px">
-    <img class="mySlides" src="https://cen.acs.org/content/dam/cen/99/11/WEB/09911-feature3-venus.jpg" style="width:50%; height: 700px; margin-left: 400px">
-    <img class="mySlides" src="https://cdn.mos.cms.futurecdn.net/yCPyoZDQBBcXikqxkeW2jJ-1200-80.jpg" style="width:50%; height: 700px; margin-left: 400px">
-    <img class="mySlides" src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Tharsis_and_Valles_Marineris_-_Mars_Orbiter_Mission_%2830055660701%29.png" style="width:50%; height: 700px; margin-left: 400px">
-    <img class="mySlides" src="https://solarsystem.nasa.gov/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDRG9JYTJWNVNTSXBNbVl4WkRNM05UWXROalZtTmkwME1URTFMVGt3WWpndE1tVXdabUV4WWpFek56RmlCam9HUlZRNkVHUnBjM0J2YzJsMGFXOXVTU0paYVc1c2FXNWxPeUJtYVd4bGJtRnRaVDBpYzNSelkya3RhQzF3TVRrek5tRmZNVGd3TUM1cWNHY2lPeUJtYVd4bGJtRnRaU285VlZSR0xUZ25KM04wYzJOcExXZ3RjREU1TXpaaFh6RTRNREF1YW5CbkJqc0dWRG9SWTI5dWRHVnVkRjkwZVhCbFNTSVBhVzFoWjJVdmFuQmxad1k3QmxRPSIsImV4cCI6IjIwMjMtMDEtMThUMTY6MjM6MDguNDEyWiIsInB1ciI6ImJsb2Jfa2V5In19--53ab16aefd07424fd33286a0c1c7fc3a29b1937f/stsci-h-p1936a_1800.jpg?content_type=image%2Fjpeg&disposition=inline%3B+filename%3D%22stsci-h-p1936a_1800.jpg%22%3B+filename%2A%3DUTF-8%27%27stsci-h-p1936a_1800.jpg" style="width:50%; height: 700px; margin-left: 400px">
-    <img class="mySlides" src="https://solarsystem.nasa.gov/system/stellar_items/image_files/38_saturn_1600x900.jpg" style="width:50%; height: 700px; margin-left: 400px">
-    <img class="mySlides" src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Uranus_as_seen_by_NASA%27s_Voyager_2_%28remastered%29_-_JPEG_converted.jpg" style="width:50%; height: 700px; margin-left: 400px">
-    <img class="mySlides" src="https://www.nasa.gov/sites/default/files/thumbnails/image/pia01492-main.jpg" style="width:50%; height: 700px; margin-left: 400px">
-</section>
+<div class="center">
+    <button onclick="window.location.href = 'index.html';">Celestial Body Simulator</button>
+    <button onclick="window.location.href = 'index2.html';">Solar System Simulation</button>
+    <button onclick="window.location.href = 'index3.html';">Physics Explanation</button>
+    </div>
 </body>
 <script>
-    // Automatic Slideshow - change image every 3 seconds
-    let myIndex = 0;
-    carousel();
 
-    function carousel() {
-        let i;
-        let x = document.getElementsByClassName("mySlides");
-        for (i = 0; i < x.length; i++) {
-            x[i].style.display = "none";
-        }
-        myIndex++;
-        if (myIndex > x.length) {myIndex = 1}
-        x[myIndex-1].style.display = "block";
-        setTimeout(carousel, 3000);
-    }
 </script>
 </html>
