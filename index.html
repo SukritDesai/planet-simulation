@@ -12,84 +12,84 @@
     <a href="index3.html">Physics Explanation</a>
 </div>
 <style>
-body, html {
-    height: 100%;
-}
+    body, html {
+        height: 100%;
+    }
 
-.topnav {
-    overflow: hidden;
-    background-color: #333;
-}
+    .topnav {
+        overflow: hidden;
+        background-color: #333;
+    }
 
-.topnav a {
-    float: left;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 50px;
-    text-decoration: none;
-    font-size: 17px;
-    margin-right: 100px;
-    font-family: sans-serif;
-}
+    .topnav a {
+        float: left;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 50px;
+        text-decoration: none;
+        font-size: 17px;
+        margin-right: 100px;
+        font-family: sans-serif;
+    }
 
-.topnav a:hover {
-    background-color: #ddd;
-    color: black;
-    transition-duration: 0.4s;
-}
+    .topnav a:hover {
+        background-color: #ddd;
+        color: black;
+        transition-duration: 0.4s;
+    }
 
-.topnav a.active {
-    transition-duration: 0.4s;
-    background-color: #04AA6D;
-    color: white;
-}
+    .topnav a.active {
+        transition-duration: 0.4s;
+        background-color: #04AA6D;
+        color: white;
+    }
 
-input[type=text] {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    border: 3px solid #ccc;
-    -webkit-transition: 0.5s;
-    transition: 0.5s;
-    outline: none;
-}
+    input[type=text] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 3px solid #ccc;
+        -webkit-transition: 0.5s;
+        transition: 0.5s;
+        outline: none;
+    }
 
-input[type=text]:focus {
-    border: 3px solid #555;
-}
+    input[type=text]:focus {
+        border: 3px solid #555;
+    }
 
-.button1 {
-    background-color: white;
-    color: black;
-    border: 2px solid #555555;
-}
+    .button1 {
+        background-color: white;
+        color: black;
+        border: 2px solid #555555;
+    }
 
-.button1:hover {
-    background-color: #555555;
-    color: white;
-}
-.button {
-    border: 2px solid #555555;
-    padding: 16px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-}
-.slider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 25px;
-    background: #d3d3d3;
-    outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-}
+    .button1:hover {
+        background-color: #555555;
+        color: white;
+    }
+    .button {
+        border: 2px solid #555555;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+    .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 25px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+    }
 </style>
 
 
@@ -288,10 +288,10 @@ input[type=text]:focus {
         // radius in meters
         planet[nPlanets].speed = document.getElementById('planetSpeed').value;
         // speed in meters per second
-        planet[nPlanets].x = planet[0].orbitalRadius+100;
+        planet[nPlanets].x = planet[nPlanets].orbitalRadius-100;
         planet[nPlanets].y = 0;
         planet[nPlanets].vx = 0;
-        planet[nPlanets].vy = planet[0].speed;
+        planet[nPlanets].vy = planet[0].speed+planet[nPlanets].speed*0.1;
         planet[nPlanets].trailColor = document.getElementById('trailColor').value;
         planet[nPlanets].gradient0 = document.getElementById('planetGradient2').value;
         planet[nPlanets].gradient1 = document.getElementById('planetGradient1').value;
@@ -364,11 +364,6 @@ input[type=text]:focus {
                 pixelY = theCanvas.height / 2 - 40 - (planet[index].y - centerY) / metersPerPixel;
                 theContext.beginPath();
                 theContext.arc(pixelX, pixelY, planet[index].radius, 0, 2 * Math.PI);
-                theContext.strokeStyle = "white";
-                let selected = 6;
-                if (planet[index] === selected) {
-                    theContext.stroke();
-                }
                 theGradient = theContext.createRadialGradient(pixelX - 1, pixelY - 2, 1, pixelX, pixelY, planet[index].radius);
                 theGradient.addColorStop(0, planet[index].gradient0);
                 theGradient.addColorStop(1, planet[index].gradient1);
