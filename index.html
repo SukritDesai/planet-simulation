@@ -97,13 +97,16 @@
 <div class="flex-container" style="display: flex">
     <div style="padding: 30px">
         <form>
-            <label for="orbRadius">Orbital Radius:</label> <span title="Radius away from the center of the screen">🛈</span><br>
-            <input type="text" id="orbRadius" name="orbRadius" value="1.49e11"><br><br>
-            <label for="planetSpeed">Planet Speed:</label><span title="Speed the planet is moving">🛈</span><br>
-            <input type="text" id="planetSpeed" name="planetSpeed" value="1e5"><br><br>
-            <label for="mass">Mass:</label><span title="Mass of the planet">🛈</span><br>
-            <input type="text" id="mass" name="mass" value = "5.972*10^24"><br><br>
-            <label for="radius">Planet Radius:</label><span title="Radius of the planet">🛈</span><br>
+            <label for="orbRadius">Orbital Radius: </label> <span title="Radius away from the center of the screen"> 🛈</span><br>
+            Tip: (enter in terms of 1e11)<br>
+            <input type="text" id="orbRadius" name="orbRadius" value="1e11"><br><br>
+            <label for="planetSpeed">Planet Speed:</label><span title="Speed the planet is moving"> 🛈</span><br>
+            Tip: (enter in terms of 1000)<br>
+            <input type="text" id="planetSpeed" name="planetSpeed" value="1000"><br><br>
+            <label for="mass">Mass:</label><span title="Mass of the planet"> 🛈</span><br>
+            Tip: (enter in terms of 100)<br>
+            <input type="text" id="mass" name="mass" value = "100"><br><br>
+            <label for="radius">Planet Radius: (number of pixels)</label><span title="Radius of the planet"> 🛈</span><br>
             <input type="text" id="radius" name="radius" value = "10"><br><br>
             <label for="trailColor">Trail Color:</label>
             <input type="color" id="trailColor" name="trailColor" value="#e66465"><br><br>
@@ -291,7 +294,7 @@
         planet[nPlanets].x = planet[nPlanets].orbitalRadius-100;
         planet[nPlanets].y = 0;
         planet[nPlanets].vx = 0;
-        planet[nPlanets].vy = planet[nPlanets].speed;
+        planet[nPlanets].vy = planet[nPlanets].speed*100;
         planet[nPlanets].trailColor = document.getElementById('trailColor').value;
         planet[nPlanets].gradient0 = document.getElementById('planetGradient2').value;
         planet[nPlanets].gradient1 = document.getElementById('planetGradient1').value;
@@ -309,8 +312,9 @@
 
     // Move the planet by a single time step and schedule next move:
     function runMotion() {
+
         let speedSlider = document.getElementById("speedSlider");
-        let dt = speedSlider.value*2000;
+        let dt = speedSlider.value*300;
         // time step in seconds
         let r;
         let accel;
@@ -325,6 +329,8 @@
 
         for (let i = 0; i <= nPlanets; i++) {
             for (let h = 0; h <= nPlanets; h++){
+                console.log([i])
+                console.log(planet[i].vy)
                 r = dist(planet[i].x, planet[i].y, planet[h].x, planet[h].y);
                 accel = newtonG * ((planet[h].mass*planet[i].mass) / (r * r));
 
