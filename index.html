@@ -148,7 +148,21 @@
 <script>
     //depending on if runFlag is 1 or 0 it will run or not run the program
     let runFlag;
+    let x = 0;
     function play() {
+        //first time pressing play resets the screen
+        if (x ===0){
+            window.clearTimeout(timer);
+            nPlanets=-1;
+            for (let i = 0; i<=nPlanets; i++){
+                planet[i]=0;
+            }
+            trailContext.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+            trailContext.fillStyle = "black";
+            trailContext.fillRect(0, 0, theCanvas.width, theCanvas.height);
+            timeInDays = 0;
+            x++;
+        }
         window.clearTimeout(timer);
         runFlag = 1;
         runMotion();
