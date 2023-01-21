@@ -5,8 +5,14 @@
     <title>Homepage</title>
 </head>
 <style>
+    .bg-img {
+        width: 100%;
+        padding: 10% 0;
+        background-size: cover;
+        background-position: center;
+        height: 117.8%;
+    }
     body {
-        background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/800px-Mercury_in_true_color.jpg");
         height: 500px;
         background-position: center;
         background-repeat: no-repeat;
@@ -20,11 +26,12 @@
         height: 600px;
         margin-right: 10px;
     }
-    .center{
-        transition-duration: 0.4s;
+    button {
+
     }
+
     button:hover {
-        background-color: #4CAF50; /* Green */
+        background-color: black;
         color: white;
     }
     button{
@@ -34,8 +41,12 @@
         border-radius: 12px;
         stroke: white;
         font-size: 30px;
+        transition-duration: 0.4s;
     }
 </style>
+<div class="bg-img" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/800px-Mercury_in_true_color.jpg')">
+    <div class="overlay"></div>
+
 <body style="font-family:sans-serif; font-size:15px; margin-left:auto; margin-right:auto; margin-top: auto; background-color:#d0d6d0;">
 <div class="center">
     <button onclick="window.location.href = 'index.html';">Celestial Body Simulator</button>
@@ -43,7 +54,19 @@
     <button onclick="window.location.href = 'index3.html';">Physics Explanation</button>
     </div>
 </body>
+</div>
 <script>
-
+    const images = ['https://cdn.mos.cms.futurecdn.net/RifjtkFLBEFgzkZqWEh69P.jpg',
+        'https://upload.wikimedia.org/wikipedia/commons/c/cb/The_Blue_Marble_%28remastered%29.jpg',
+        'https://upload.wikimedia.org/wikipedia/commons/0/0e/Tharsis_and_Valles_Marineris_-_Mars_Orbiter_Mission_%2830055660701%29.png',
+        'https://cdn.mos.cms.futurecdn.net/Cvzdqd7AxLzjzQNoZaQVhC.jpg',
+        'https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg',
+        'https://solarsystem.nasa.gov/system/stellar_items/image_files/69_feature_1600x900_uranus_new.jpg',
+        'https://cdn.mos.cms.futurecdn.net/PezBzd9Fehsq9XWgWMauVV.jpg'];
+    setInterval(function() {
+        document.getElementsByClassName('bg-img')[0].setAttribute('style', 'background-image: url("'+images[0]+'")');
+        images.splice(images.length, 0, images[0]);
+        images.splice(0, 1);
+    }, 3000);
 </script>
 </html>
