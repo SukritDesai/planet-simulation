@@ -1,3 +1,7 @@
+<!--Name: Kevin Kolyakov & Sukrit Desai-->
+<!--Date: January 20, 2023-->
+<!--Teacher: Mr.Gugoiu-->
+<!--Purpose: Website that simulates planets orbiting other planets with a physics simulation along with an explanation of the physics and a homepage-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,6 +9,7 @@
     <meta name="viewport" content="width=600">
     <title>Celestial Body Simulator</title>
 </head>
+<!--navbar-->
 <div class="topnav">
     <a href="index1.html">Homepage</a>
     <a href="index2.html">Solar System Simulator</a>
@@ -97,6 +102,7 @@
 <div class="flex-container" style="display: flex">
     <div style="padding: 30px">
         <form>
+<!--            for adding a celestial object-->
             <label for="orbRadius">Orbital Radius: </label> <span title="Radius away from the center of the screen"> 🛈</span><br>
             Tip: (enter in terms of 1e11)<br>
             <input type="text" id="orbRadius" name="orbRadius" value="1e11"><br><br>
@@ -120,6 +126,7 @@
     </div>
 
     <div style="width:800px; margin-left:auto; margin-right:auto; position:relative;">
+<!--        to change the speed-->
         Speed:
         <label class="slider" for="speedSlider"></label><input id="speedSlider" type="range" min="1" max="100" value="10" ><br><br>
         <canvas id="trailCanvas" width="900" height="550" style="position:absolute;"></canvas>
@@ -127,6 +134,7 @@
         </canvas>
         <div style="text-align: center;">
             <div id="buttons">
+<!--                buttons for pausing, playing resetting and an example-->
                 <input class="button button1" type="button" id="play" value="Play" onclick="play()">
                 <input class="button button1" type="button" id="pause" value="Pause" onclick="pause()">
                 <input class="button button1" type="button" id="reset" value="Reset" onclick="reset()">
@@ -138,6 +146,7 @@
 </div>
 
 <script>
+    //depending on if runFlag is 1 or 0 it will run or not run the program
     let runFlag;
     function play() {
         window.clearTimeout(timer);
@@ -148,9 +157,9 @@
     function pause() {
         window.clearTimeout(timer);
         runFlag = 0;
-
     }
     function reset() {
+        //resets timer and planets and clears the background
         window.clearTimeout(timer);
         nPlanets=-1;
         for (let i = 0; i<=nPlanets; i++){
@@ -162,10 +171,11 @@
         timeInDays = 0;
     }
     function example(){
+        //example planets
         nPlanets=6;
         planet[0] = {};
         planet[0].orbitalRadius = 1.49e11;
-        // radius in meters
+        // radius in meters from center
         planet[0].speed = 0.8 * 3.0e4;
         // speed in meters per second
         planet[0].x = planet[0].orbitalRadius;
@@ -176,13 +186,13 @@
         planet[0].gradient0 = "#d0d0ff";
         planet[0].gradient1 = "#0000ff";
         planet[0].radius = 10;
+        //looks of planet in radius(pixels)
         planet[0].mass = 5.972*10^24;
+        //mass of planet
 
         planet[1] = {};
         planet[1].orbitalRadius = 1.49e11;
-        // radius in meters
         planet[1].speed = 3.0e4;
-        // speed in meters per second
         planet[1].x = planet[1].orbitalRadius;
         planet[1].y = 0;
         planet[1].vx = 0;
@@ -195,9 +205,7 @@
 
         planet[2] = {};
         planet[2].orbitalRadius = 1.49e11;
-        // radius in meters
         planet[2].speed = 1.2 * 3.0e4;
-        // speed in meters per second
         planet[2].x = planet[2].orbitalRadius;
         planet[2].y = 0;
         planet[2].vx = 0;
@@ -210,9 +218,7 @@
 
         planet[3] = {};
         planet[3].orbitalRadius = 1.49e11;
-        // radius in meters
         planet[3].speed = Math.sqrt(2.0) * 3.0e4;
-        // speed in meters per second
         planet[3].x = planet[3].orbitalRadius;
         planet[3].y = 0;
         planet[3].vx = 0;
@@ -225,9 +231,7 @@
 
         planet[4] = {};
         planet[4].orbitalRadius = -1.0e11;
-        // radius in meters
         planet[4].speed = 1.5 * 3.0e4;
-        // speed in meters per second
         planet[4].x = planet[4].orbitalRadius;
         planet[4].y = 0;
         planet[4].vx = 0;
@@ -240,9 +244,7 @@
 
         planet[5] = {};
         planet[5].orbitalRadius = -1.4e11;
-        // radius in meters
         planet[5].speed = 1e5;
-        // speed in meters per second
         planet[5].x = planet[5].orbitalRadius;
         planet[5].y = 0;
         planet[5].vx = 0;
@@ -271,7 +273,7 @@
     }
 
     let theCanvas = document.getElementById("theCanvas");
-    // for drawing the projectile
+    // for drawing the planets
     let theContext = theCanvas.getContext("2d");
     let trailCanvas = document.getElementById("trailCanvas");
     // for drawing trails
@@ -286,11 +288,11 @@
     // number of planets
     document.getElementById('addPlanet').onclick = function() {
         nPlanets++;
+        //increases number of planets
         planet[nPlanets] = {};
+        //gets user input for each property of planet
         planet[nPlanets].orbitalRadius = document.getElementById('orbRadius').value;
-        // radius in meters
         planet[nPlanets].speed = document.getElementById('planetSpeed').value;
-        // speed in meters per second
         planet[nPlanets].x = planet[nPlanets].orbitalRadius-100;
         planet[nPlanets].y = 0;
         planet[nPlanets].vx = 0;
@@ -306,6 +308,7 @@
     let timeInDays = 0;
     let drawIndex = 0;
     let newtonG = 2e-11;
+    //Newtonian Constant of Gravity
 
     trailContext.fillStyle = "black";
     trailContext.fillRect(0, 0, theCanvas.width, theCanvas.height);
@@ -322,6 +325,7 @@
         let ay;
         let bKmPerPixel = 1.6;
         function dist(x1, y1, x2, y2) {
+            //calculates distance through pythagorean theorem
             const xDist = x2 - x1;
             const yDist = y2 - y1;
             return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))*(bKmPerPixel);
@@ -329,12 +333,13 @@
 
         for (let i = 0; i <= nPlanets; i++) {
             for (let h = 0; h <= nPlanets; h++){
-                console.log([i])
-                console.log(planet[i].vy)
+                //checks for all gravitational pull between plants
                 r = dist(planet[i].x, planet[i].y, planet[h].x, planet[h].y);
                 accel = newtonG * ((planet[h].mass*planet[i].mass) / (r * r));
+                //calculates gravitational pull
 
                 if (accel===Infinity) accel=0;
+                //error trapping
 
                 ax = -accel * planet[i].x / r;
                 if (isNaN(ax)) ax=0;
@@ -357,24 +362,28 @@
         // Draw each planet at its current location, and add a dot to the trail:
         function drawMotion() {
             theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
-
             let metersPerPixel = 1.6e9;
 
             drawIndex = -1;
             let theGradient;
             let pixelX;
+            //planet center
             let pixelY;
+            //planet center
             for (let index = nPlanets; index >= 0; index--) {
                 pixelX = theCanvas.width / 2 + (planet[index].x - centerX) / metersPerPixel;
                 pixelY = theCanvas.height / 2 - 40 - (planet[index].y - centerY) / metersPerPixel;
                 theContext.beginPath();
                 theContext.arc(pixelX, pixelY, planet[index].radius, 0, 2 * Math.PI);
+                //draws planet
                 theGradient = theContext.createRadialGradient(pixelX - 1, pixelY - 2, 1, pixelX, pixelY, planet[index].radius);
                 theGradient.addColorStop(0, planet[index].gradient0);
                 theGradient.addColorStop(1, planet[index].gradient1);
                 theContext.fillStyle = theGradient;
                 theContext.fill();
+                //ads gradient for planet
                 trailContext.fillStyle = planet[index].trailColor;
+                //gives trail
                 trailContext.fillRect(pixelX - 0.5, pixelY - 0.5, 1, 1);
             }
 
@@ -383,6 +392,7 @@
             let timeLabel = ' days ';
             timeLabel = timeInDays.toFixed(1) + timeLabel;
             theContext.fillText(timeLabel, 20, 20);
+            //shows the number of days program is in play
         }
     }
 </script>
