@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Solar System Simulation</title>
+</head>
+<body style="background-color: dimgrey">
+    <!-- Makes the container to hold both the background (space and the sun) and the foreground (the text values like FPS)-->
+    <div id="container" style="width: 800px; height: 600px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <!-- The background layer. The z index is 0 because it should be at the bottom of the stack-->
+        <canvas id="background_layer" width="800" height="600" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+        <!-- The foreground layer. The z index is 1 because it should be above the background, this has the planets-->
+        <canvas id="foreground_layer" width="800" height="600" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+    </div>
+    <!-- Our Javascript code -->
+    <script type="text/javascript" src="create_canvas.js"></script>
+</body>
+</html>
