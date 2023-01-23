@@ -10,20 +10,18 @@
 // If the value is set to null that means that it will be edited accordingly later
 
 const Elements = {
-    //Define background canvas
+    // Define background canvas
     background: document.getElementById('background_layer'), //Grab the HTML5 Background Canvas (will only be drawn once)
-    context_background: null,
     //Define foreground canvas
     foreground: document.getElementById('foreground_layer'), //Grab the HTML5 Foreground Canvas (elements on this canvas will be rendered every frame; moving objects)
-    context_foreground: null,
-    width: null,
-    height: null,
-    //Define framerate variables
-    fps: 20, //Set desired framerate
-    now: null,
-    then: Date.now(),
-    interval: null,
-    delta: null,
+    context_foreground: null, // Used to get the context of the foreground layer so that drawing can be done
+    width: null, // width of screen
+    height: null, // height of screen
+    fps: 60, // Framerate of the animation
+    now: null, // used for updating the animation
+    then: Date.now(), // time when object is instantiated, called "then" because when it is used, some time would have passed
+    interval: null, // sets how often to update the animation
+    delta: null, //
     //FPS
     nowFPS:null,
     thenFPS:Date.now(),
@@ -40,7 +38,7 @@ const Elements = {
     MONTH:null,
     YEAR:null,
 
-//ELEMENTS @ J2000: a, e, i, mean longitude (L), longitude of perihelion, longitude of ascending node
+    // ELEMENTS @ J2000: a, e, i, mean longitude (L), longitude of perihelion, longitude of ascending node
     planetElements: [
         //MERCURY (0)
         [0.38709927, 0.20563593, 7.00497902, 252.25032350, 77.45779628, 48.33076593],
@@ -60,7 +58,7 @@ const Elements = {
         [30.06992276, 0.00859048, 1.77004347, -55.12002969, 44.96476227, 131.78422574]
     ],
 
-//RATES: a, e, i, mean longitude (L), longitude of perihelion, longitude of ascending node
+    // RATES: a, e, i, mean longitude (L), longitude of perihelion, longitude of ascending node
     planetRates: [
         //MERCURY (0)
         [0.00000037, 0.00001906, -0.00594749, 149472.67411175, 0.16047689,-0.1253408],
@@ -108,14 +106,14 @@ const Elements = {
     neptuneScaleDivider: 8.7
 }
 
-init_Elements();
+init();
+// Initializes all the required basics and calls the animation function
+function init() {
+    Elements.contextbackground = Elements.background.getContext('2d'); // Gets the context to start drawing
+    Elements.context_foreground = Elements.foreground.getContext('2d');
 
-function init_Elements(){
-    Elements.contextbackground = Elements.background.getContext('2d'); //Need the context to be able to draw on the canvas
-    Elements.context_foreground = Elements.foreground.getContext('2d'); //Need the context to be able to draw on the canvas
-
-    Elements.width = Elements.foreground.width;
-    Elements.height = Elements.foreground.height;
+    Elements.width = Elements.foreground.width; // sets the width
+    Elements.height = Elements.foreground.height; // sets the height
 
     // sets the animation interval
     Elements.interval = 1000 / Elements.fps;
@@ -127,69 +125,60 @@ function init_Elements(){
     Elements.MONTH = Elements.current.getMonth() + 1; // Gets the month set above, adds one because its 1 indexed (January starts at 0)
     Elements.YEAR = Elements.current.getFullYear(); // Gets the year set above
 
-    Elements.julianDate = getJulianDate_Elements(Elements.YEAR, Elements.MONTH, Elements.DAY); // converts the gregorian date to the julian date
-    // 3. Get Julian Centuries since Epoch (J2000)
+    Elements.julianDate = getJulianDate(Elements.YEAR, Elements.MONTH, Elements.DAY); // converts the gregorian date to the julian date
+
     Elements.T = (Elements.julianDate - Elements.julianEpochJ2000) / Elements.julianCenturyInJulianDays; // gets the amount of julian centuries
 
-    // Render background once (render the Sun at center)
-    renderBackground_Elements();
+    // Renders background once (render the Sun at center)
+    renderBackground();
     // Starts the main loop
-    run_Elements();
+    run();
 }
 
-//Loop Function that runs as fast as possible (logic speed)
-function run_Elements(){
-    Elements.now = Date.now();
+// The function that runs the animation
+function run() {
+    Elements.now = Date.now(); // Gets the current time
     // The difference in the time since the Elements object is instantiated and now
     Elements.delta = Elements.now - Elements.then;
 
-    //Run this code based on desired rendering rate
-    if (Elements.delta > Elements.interval) {
-        Elements.then = Elements.now - (Elements.delta % Elements.interval);
 
-        // Keep track of FPS
-        Elements.FPSCount++;
-        Elements.nowFPS = Date.now();
-        Elements.deltaFPS = Elements.nowFPS - Elements.thenFPS;
-        if (Elements.deltaFPS > 1000) { //Update frame rate every second
-            Elements.avgFPSCount = Elements.FPSCount;
-            Elements.FPSCount = 0;
-            Elements.thenFPS = Elements.nowFPS - (Elements.deltaFPS % 1000);
-        }
+    // Run this code based on desired rendering rate
+    if (Elements.delta > Elements.interval) { // checks if time difference is greater than the desired interval between animations
+        Elements.then = Elements.now - (Elements.delta % Elements.interval); // changes the time since the object is instantiated in order to be able to call this function many times without it breaking
 
-        //Increase date by 1 day each frame
-        updateDate_Elements(1);
+        // Increase date by 1 day each frame
+        updateDate(1);
 
-        //Get Mercury Heliocentric Ecliptic Coordinates
-        Elements.orbitalElements = plotPlanet_Elements(Elements.T,0);Elements.xMercury = Elements.orbitalElements[0];Elements.yMercury = Elements.orbitalElements[1];
-        //Get Venus Heliocentric Ecliptic Coordinates
-        Elements.orbitalElements = plotPlanet_Elements(Elements.T,1);Elements.xVenus = Elements.orbitalElements[0];Elements.yVenus = Elements.orbitalElements[1];
-        //Get Earth Heliocentric Ecliptic Coordinates
-        Elements.orbitalElements = plotPlanet_Elements(Elements.T,2);Elements.xEarth = Elements.orbitalElements[0];Elements.yEarth = Elements.orbitalElements[1];
-        //Get Mars Heliocentric Ecliptic Coordinates
-        Elements.orbitalElements = plotPlanet_Elements(Elements.T,3);Elements.xMars = Elements.orbitalElements[0];Elements.yMars = Elements.orbitalElements[1];
-        //Get Jupiter Heliocentric Ecliptic Coordinates
-        Elements.orbitalElements = plotPlanet_Elements(Elements.T,4);Elements.xJupiter = Elements.orbitalElements[0];Elements.yJupiter = Elements.orbitalElements[1];
-        //Get Saturn Heliocentric Ecliptic Coordinates
-        Elements.orbitalElements = plotPlanet_Elements(Elements.T,5);Elements.xSaturn = Elements.orbitalElements[0];Elements.ySaturn = Elements.orbitalElements[1];
-        //Get Uranus Heliocentric Ecliptic Coordinates
-        Elements.orbitalElements = plotPlanet_Elements(Elements.T,6);Elements.xUranus = Elements.orbitalElements[0];Elements.yUranus = Elements.orbitalElements[1];
-        //Get Neptune Heliocentric Ecliptic Coordinates
-        Elements.orbitalElements = plotPlanet_Elements(Elements.T,7);Elements.xNeptune = Elements.orbitalElements[0];Elements.yNeptune = Elements.orbitalElements[1];
+        // Gets Mercury Heliocentric Ecliptic Coordinates
+        Elements.orbitalElements = plotPlanet(Elements.T,0);Elements.xMercury = Elements.orbitalElements[0];Elements.yMercury = Elements.orbitalElements[1];
+        // Gets Venus Heliocentric Ecliptic Coordinates
+        Elements.orbitalElements = plotPlanet(Elements.T,1);Elements.xVenus = Elements.orbitalElements[0];Elements.yVenus = Elements.orbitalElements[1];
+        // Gets Earth Heliocentric Ecliptic Coordinates
+        Elements.orbitalElements = plotPlanet(Elements.T,2);Elements.xEarth = Elements.orbitalElements[0];Elements.yEarth = Elements.orbitalElements[1];
+        // Gets Mars Heliocentric Ecliptic Coordinates
+        Elements.orbitalElements = plotPlanet(Elements.T,3);Elements.xMars = Elements.orbitalElements[0];Elements.yMars = Elements.orbitalElements[1];
+        // Gets Jupiter Heliocentric Ecliptic Coordinates
+        Elements.orbitalElements = plotPlanet(Elements.T,4);Elements.xJupiter = Elements.orbitalElements[0];Elements.yJupiter = Elements.orbitalElements[1];
+        // Gets Saturn Heliocentric Ecliptic Coordinates
+        Elements.orbitalElements = plotPlanet(Elements.T,5);Elements.xSaturn = Elements.orbitalElements[0];Elements.ySaturn = Elements.orbitalElements[1];
+        // Gets Uranus Heliocentric Ecliptic Coordinates
+        Elements.orbitalElements = plotPlanet(Elements.T,6);Elements.xUranus = Elements.orbitalElements[0];Elements.yUranus = Elements.orbitalElements[1];
+        // Gets Neptune Heliocentric Ecliptic Coordinates
+        Elements.orbitalElements = plotPlanet(Elements.T,7);Elements.xNeptune = Elements.orbitalElements[0];Elements.yNeptune = Elements.orbitalElements[1];
     }
 
-    //schedules a callback invocation before the next repaint. The number of callbacks performed is usually 60 times per second
-    requestAnimationFrame(renderForeground_Elements); // Call requestAnimationFrame to draw to the screen (native way for browsers to handle animation) --> This does not affect the FPS, but dramatically improves TPS
+    // this is required so that the browser animates
+    requestAnimationFrame(renderForeground);
 
-    //Loop as fast as we can
-    setTimeout(run_Elements,0);
+    // Loops as fast as possible (required so that the animation doesn't break)
+    setTimeout(run,0);
 }
 
-//RENDER BACKGROUND. ONLY INCLUDES STATIC ELEMENTS ON SCREEN.
-function renderBackground_Elements(){
+// Draws the static elements to the screen
+function renderBackground() {
     // Sets the background color of the canvas
     Elements.contextbackground.fillStyle='#090909';
-    Elements.contextbackground.fillRect(0,0,Elements.width,Elements.height); // "ClearRect" by re-painting the background color
+    Elements.contextbackground.fillRect(0,0, Elements.width, Elements.height); // It repaints the background to "clear" the screen
 
     // Makes the sun
     Elements.contextbackground.beginPath();
@@ -199,160 +188,163 @@ function renderBackground_Elements(){
     Elements.contextbackground.closePath();
 }
 
-//RENDER FOREGROUND. INCLUDES ALL DYNAMIC ELEMENTS ON SCREEN.
-function renderForeground_Elements(){
-    //Clear the canvas (otherwise there will be "ghosting" on foreground layer)
+// used to label the planets
+function planetText(name, x, y) {
+    Elements.context_foreground.font = "15pt Times New Roman";
+    Elements.context_foreground.fillStyle = "pink";
+    Elements.context_foreground.textAlign = "center";
+    Elements.context_foreground.fillText(name, x, y);
+}
+
+// makes all the moving parts in the animation
+function renderForeground(){
+    //C lear the canvas (otherwise there will be "ghosting" on foreground layer)
     Elements.context_foreground.clearRect(0, 0, Elements.width, Elements.height);
 
-    //INNER PLANETS
-    //Render planet Mercury
+    // Render planet Mercury
     Elements.context_foreground.beginPath();
     Elements.context_foreground.arc((Elements.width / 2) + (Elements.xMercury * Elements.scale), (Elements.height / 2) - (Elements.yMercury * Elements.scale), (3 + (0.5 * (4879/10000))), 0, 2*Math.PI, true);
     Elements.context_foreground.fillStyle = 'Chocolate';
     Elements.context_foreground.fill();
     Elements.context_foreground.closePath();
-    //Render planet Venus
+    planetText("M", (Elements.width / 2) + (Elements.xMercury * Elements.scale), (Elements.height / 2) - (Elements.yMercury * Elements.scale));
+
+    // Render planet Venus
     Elements.context_foreground.beginPath();
-    Elements.context_foreground.arc((Elements.width / 2) + (Elements.xVenus * Elements.scale), (Elements.height/2)-(Elements.yVenus*Elements.scale),(3 + (0.5 * (12104/10000))), 0, 2*Math.PI, true);
+    Elements.context_foreground.arc((Elements.width / 2) + (Elements.xVenus * Elements.scale), (Elements.height / 2)-(Elements.yVenus * Elements.scale),( 3 + (0.5 *(12104/10000))), 0, 2*Math.PI, true);
     Elements.context_foreground.fillStyle = 'BurlyWood';
     Elements.context_foreground.fill();
     Elements.context_foreground.closePath();
-    //Render planet Earth
+    planetText("V", (Elements.width / 2) + (Elements.xVenus * Elements.scale), (Elements.height / 2)-(Elements.yVenus * Elements.scale));
+    // Render planet Earth
     Elements.context_foreground.beginPath();
     Elements.context_foreground.arc((Elements.width/2)+(Elements.xEarth*Elements.scale), (Elements.height/2)-(Elements.yEarth*Elements.scale),  (3+(0.5*(12756/10000))), 0, 2*Math.PI, true);
     Elements.context_foreground.fillStyle = 'SteelBlue';
     Elements.context_foreground.fill();
     Elements.context_foreground.closePath();
-    //Render planet Mars
+    planetText("E", (Elements.width/2)+(Elements.xEarth*Elements.scale), (Elements.height/2)-(Elements.yEarth*Elements.scale));
+    // Render planet Mars
     Elements.context_foreground.beginPath();
     Elements.context_foreground.arc((Elements.width/2)+(Elements.xMars*Elements.scale), (Elements.height/2)-(Elements.yMars*Elements.scale), (3+(0.5*(6792/10000))), 0, 2*Math.PI, true);
     Elements.context_foreground.fillStyle = 'red';
     Elements.context_foreground.fill();
     Elements.context_foreground.closePath();
+    planetText("Ma", (Elements.width/2)+(Elements.xMars*Elements.scale), (Elements.height/2)-(Elements.yMars*Elements.scale));
 
-    //OUTER PLANETS
-    //Render planet Jupiter
+    // Render planet Jupiter
     Elements.context_foreground.beginPath();
     Elements.context_foreground.arc((Elements.width/2)+(Elements.xJupiter*Elements.scale/Elements.jupiterScaleDivider), (Elements.height/2)-(Elements.yJupiter*Elements.scale/Elements.jupiterScaleDivider), (4+(0.5*(142984/13000))), 0, 2*Math.PI, true);
     Elements.context_foreground.fillStyle = 'Peru';
     Elements.context_foreground.fill();
     Elements.context_foreground.closePath();
-    //Render planet Saturn
+    planetText("J", (Elements.width/2) + (Elements.xJupiter*Elements.scale/Elements.jupiterScaleDivider), (Elements.height/2) - (Elements.yJupiter*Elements.scale/Elements.jupiterScaleDivider));
+    // Render planet Saturn
     Elements.context_foreground.beginPath();
-    Elements.context_foreground.arc((Elements.width/2)+(Elements.xSaturn*Elements.scale/Elements.saturnScaleDivider), (Elements.height/2)-(Elements.ySaturn*Elements.scale/Elements.saturnScaleDivider), (4+(0.5*(120536/13000))), 0, 2*Math.PI, true);
+    Elements.context_foreground.arc((Elements.width / 2) + (Elements.xSaturn * Elements.scale / Elements.saturnScaleDivider), (Elements.height/2) - (Elements.ySaturn*Elements.scale / Elements.saturnScaleDivider), (4+(0.5*(120536/13000))), 0, 2*Math.PI, true);
     Elements.context_foreground.fillStyle = 'AliceBlue';
     Elements.context_foreground.fill();
     Elements.context_foreground.closePath();
-    //Render planet Uranus
+    planetText("S", (Elements.width / 2) + (Elements.xSaturn * Elements.scale / Elements.saturnScaleDivider), (Elements.height / 2) - (Elements.ySaturn * Elements.scale / Elements.saturnScaleDivider));
+    // Render planet Uranus
     Elements.context_foreground.beginPath();
-    Elements.context_foreground.arc((Elements.width/2)+(Elements.xUranus*Elements.scale/Elements.uranusScaleDivider), (Elements.height/2)-(Elements.yUranus*Elements.scale/Elements.uranusScaleDivider), (4+(0.5*(51118/13000))), 0, 2*Math.PI, true);
+    Elements.context_foreground.arc((Elements.width / 2) + (Elements.xUranus * Elements.scale / Elements.uranusScaleDivider), (Elements.height / 2) - (Elements.yUranus * Elements.scale / Elements.uranusScaleDivider), (4+(0.5*(51118/13000))), 0, 2*Math.PI, true);
     Elements.context_foreground.fillStyle = 'LightSkyBlue';
     Elements.context_foreground.fill();
     Elements.context_foreground.closePath();
-    //Render planet Neptune
+    planetText("U", (Elements.width / 2) + (Elements.xUranus * Elements.scale / Elements.uranusScaleDivider), (Elements.height / 2) - (Elements.yUranus * Elements.scale / Elements.uranusScaleDivider));
+    // Render planet Neptune
     Elements.context_foreground.beginPath();
-    Elements.context_foreground.arc((Elements.width/2)+(Elements.xNeptune*Elements.scale/Elements.neptuneScaleDivider), (Elements.height/2)-(Elements.yNeptune*Elements.scale/Elements.neptuneScaleDivider), (4+(0.5*(49528/13000))), 0, 2*Math.PI, true);
+    Elements.context_foreground.arc((Elements.width / 2) + (Elements.xNeptune * Elements.scale / Elements.neptuneScaleDivider), (Elements.height / 2) - (Elements.yNeptune * Elements.scale / Elements.neptuneScaleDivider), (4+(0.5*(49528/13000))), 0, 2*Math.PI, true);
     Elements.context_foreground.fillStyle = 'MidnightBlue';
     Elements.context_foreground.fill();
     Elements.context_foreground.closePath();
+    planetText("N", (Elements.width / 2) + (Elements.xNeptune * Elements.scale / Elements.neptuneScaleDivider), (Elements.height / 2) - (Elements.yNeptune * Elements.scale / Elements.neptuneScaleDivider));
 
-    //Render Gregorian Date for Today
+    // Render Gregorian Date for Today
     Elements.context_foreground.font = "20px Times New Roman";
     Elements.context_foreground.textAlign = "left";
-    Elements.context_foreground.fillStyle = "";
+    Elements.context_foreground.fillStyle = "dimgrey";
     Elements.context_foreground.fillText("Date = "+Elements.YEAR+"."+Elements.MONTH+"."+Elements.DAY,10,340);
 }
 
-function getJulianDate_Elements(Year,Month,Day){
-    let inputDate = new Date(Year, Month, Math.floor(Day));
-    let switchDate = new Date(1582, 10, 15);
+// Used for calculations because a lot of the formulas require the julian calendar date and not the gregorian which is what we use
+function getJulianDate(Year, Month, Day) {
+    let inputDate = new Date(Year, Month, Math.floor(Day)); // makes the date object so that calculations are easier
+    let switchDate = new Date(1582, 10, 15); // The date when the world switched between the julian calendar to the gregorian, needed because 10 days are missing
 
-    let isGregorianDate = inputDate >= switchDate;
+    let isGregorianDate = inputDate >= switchDate; // checks if the date is indeed gregorian
 
-    //Adjust if B.C.
-    if(Year<0){
-        Year++;
-    }
-
-    //Adjust if JAN or FEB
+    // Adjust if JAN or FEB
     if(Month === 1||Month === 2){
         Year = Year - 1;
         Month = Month + 12;
     }
 
-    //Calculate A & B; ONLY if date is equal or after 1582-Oct-15
-    let A = Math.floor(Year/100); //A
-    let B = 2-A+Math.floor(A/4); //B
+    // Calculate A & B; ONLY if date is equal or after 1582-Oct-15
+    let A = Math.floor(Year / 100);
+    let B = 2 - A + Math.floor(A / 4);
 
-    //Ignore B if date is before 1582-Oct-15
-    if(!isGregorianDate){B=0;}
+    // Ignore B if date is before 1582-Oct-15
+    if (!isGregorianDate) {B = 0;}
 
-    return ((Math.floor(365.25*Year)) + (Math.floor(30.6001*(Month+1))) + Day + 1720994.5 + B);
+    return ((Math.floor(365.25 * Year)) + (Math.floor(30.6001*(Month + 1))) + Day + 1720994.5 + B); // Formula to convert between the dates
 }
 
-function updateDate_Elements(increment){
-    Elements.newDate = new Date(Elements.current.getFullYear(), Elements.current.getMonth(), Elements.current.getDate()+increment); //Set to today +1 day
+function updateDate(increment){
+    Elements.newDate = new Date(Elements.current.getFullYear(), Elements.current.getMonth(), Elements.current.getDate() + increment); //Set to today +1 day
+
+    // changes the current time
     Elements.current = Elements.newDate;
-
-    newdd = Elements.newDate.getDate();
-    newmm = Elements.newDate.getMonth()+1; //January is 0!
-    newyyyy = Elements.newDate.getFullYear();
-
-    Elements.YEAR = newyyyy;
-    Elements.MONTH = newmm;
-    Elements.DAY = newdd;
-
-    Elements.julianDate = getJulianDate_Elements(Elements.YEAR,Elements.MONTH,Elements.DAY);
-    Elements.T = (Elements.julianDate-Elements.julianEpochJ2000)/Elements.julianCenturyInJulianDays;
+    let newDay = Elements.newDate.getDate();
+    let newMonth = Elements.newDate.getMonth() + 1; //January is 0!
+    Elements.YEAR = Elements.newDate.getFullYear();
+    Elements.MONTH = newMonth;
+    Elements.DAY = newDay;
+    Elements.julianDate = getJulianDate(Elements.YEAR,Elements.MONTH,Elements.DAY);
+    Elements.T = (Elements.julianDate - Elements.julianEpochJ2000) / Elements.julianCenturyInJulianDays;
 }
 
-function plotPlanet_Elements(TGen,planetNumber){
-    //--------------------------------------------------------------------------------------------
-    //1.
-    //ORBIT SIZE
-    //AU (CONSTANT = DOESN'T CHANGE)
+// some functions use degrees, but javascript trig functions need radians, this converts them
+function radians(deg) {
+    return deg * (Math.PI / 180);
+}
+
+function plotPlanet(TGen, planetNumber) { // TGen == the time in julian centuries
+    // Calculates the AU (Astronomical Unit), it is needed because it is the orbit size, this value is constant
     let aGen = Elements.planetElements[planetNumber][0] + (Elements.planetRates[planetNumber][0] * TGen);
-    //2.
-    //ORBIT SHAPE
-    //ECCENTRICITY (CONSTANT = DOESN'T CHANGE)
+
+    // The eccentricity of the ellipse that makes the orbit, this is also constant
     let eGen = Elements.planetElements[planetNumber][1] + (Elements.planetRates[planetNumber][1] * TGen);
-    //--------------------------------------------------------------------------------------------
-    //3.
-    //ORBIT ORIENTATION
-    //ORBITAL INCLINATION (CONSTANT = DOESN'T CHANGE)
+
+    // the inclination of the orbit because all orbits are tilted slightly, this is also constant
     let iGen = Elements.planetElements[planetNumber][2] + (Elements.planetRates[planetNumber][2] * TGen);
     iGen = iGen % 360;
-    //4.
-    //ORBIT ORIENTATION
-    //LONG OF ASCENDING NODE (CONSTANT = DOESN'T CHANGE)
+
+    // Longitude of the ascending node of the orbit. Required for the formula for the coordinates. Learn more here: https://en.wikipedia.org/wiki/Longitude_of_the_ascending_node
     let WGen = Elements.planetElements[planetNumber][5] + (Elements.planetRates[planetNumber][5] * TGen);
-    WGen = WGen%360;
-    //5.
-    //ORBIT ORIENTATION
-    //LONGITUDE OF THE PERIHELION
+    WGen = WGen % 360; // makes sure that the angle is between 0 and 360
+
+    // longitude of the perihelion of the orbit, also required for the formula, learn more here: https://en.wikipedia.org/wiki/Longitude_of_the_periapsis
     let wGen = Elements.planetElements[planetNumber][4] + (Elements.planetRates[planetNumber][4] * TGen);
-    wGen = wGen%360;
-    if (wGen < 0) {wGen = 360 + wGen;}
-    //--------------------------------------------------------------------------------------------
-    //6.
-    //ORBIT POSITION
-    //MEAN LONGITUDE (DYNAMIC = CHANGES OVER TIME)
+    wGen = wGen % 360; // Makes sure that the angle is between 0 and 360
+    if (wGen < 0) {wGen = 360 + wGen;} // Makes sure that the angle is between 0 and 360
+
+    // MEAN LONGITUDE, changes over time
     let LGen = Elements.planetElements[planetNumber][3] + (Elements.planetRates[planetNumber][3] * TGen);
     LGen = LGen % 360;
     if (LGen < 0) {LGen = 360 + LGen;}
 
-
-    //MEAN ANOMALY --> Use this to determine Perihelion (0 degrees = Perihelion of planet)
+    // MEAN ANOMALY --> Use this to determine Perihelion (0 degrees = Perihelion of planet)
     let MGen = LGen - (wGen);
     if(MGen < 0) {MGen = 360 + MGen;}
 
-    //ECCENTRIC ANOMALY
-    let EGen = EccAnom_Elements(eGen,MGen,6);
+    // the eccentric anomaly
+    let EGen = eccentricAnomaly(eGen,MGen,6);
 
-    //ARGUMENT OF TRUE ANOMALY
-    let trueAnomalyArgGen = (Math.sqrt((1+eGen) / (1-eGen)))*(Math.tan(toRadians_Elements(EGen)/2));
+    // ARGUMENT OF TRUE ANOMALY
+    let trueAnomalyArgGen = (Math.sqrt((1+eGen) / (1-eGen))) * (Math.tan(radians(EGen) / 2));
 
-    // TRUE ANOMALY (DYNAMIC = CHANGES OVER TIME)
+    // TRUE ANOMALY, also dynamic
     let K = Math.PI/180.0; // Radian converter variable
     let nGen;
     if (trueAnomalyArgGen < 0) {
@@ -363,49 +355,42 @@ function plotPlanet_Elements(TGen,planetNumber){
     }
 
     //CALCULATE RADIUS VECTOR
-    let rGen = aGen * (1 - (eGen * (Math.cos(toRadians_Elements(EGen)))));
+    let rGen = aGen * (1 - (eGen * (Math.cos(radians(EGen)))));
 
-    //TAKEN FROM: http://www.stargazing.net/kepler/ellipse.html
-    //CREDIT: Keith Burnett
-    //Used to determine Heliocentric Ecliptic Coordinates
-    let xGen = rGen * (Math.cos(toRadians_Elements(WGen)) * Math.cos(toRadians_Elements(nGen + wGen - WGen)) - Math.sin(toRadians_Elements(WGen)) * Math.sin(toRadians_Elements(nGen + wGen - WGen)) * Math.cos(toRadians_Elements(iGen)));
-    let yGen = rGen * (Math.sin(toRadians_Elements(WGen)) * Math.cos(toRadians_Elements(nGen + wGen - WGen)) + Math.cos(toRadians_Elements(WGen)) * Math.sin(toRadians_Elements(nGen + wGen - WGen)) * Math.cos(toRadians_Elements(iGen)));
+    // Used to determine Heliocentric Ecliptic Coordinates
+    let xGen = rGen * (Math.cos(radians(WGen)) * Math.cos(radians(nGen + wGen - WGen)) - Math.sin(radians(WGen)) * Math.sin(radians(nGen + wGen - WGen)) * Math.cos(radians(iGen)));
+    let yGen = rGen * (Math.sin(radians(WGen)) * Math.cos(radians(nGen + wGen - WGen)) + Math.cos(radians(WGen)) * Math.sin(radians(nGen + wGen - WGen)) * Math.cos(radians(iGen)));
 
-    return [xGen, yGen];
+    return [xGen, yGen]; // returns the coordinates
 }
 
-//TAKEN FROM: http://www.jgiesen.de/kepler/kepler.html
-//Used to solve for E
-function EccAnom_Elements(ec,m,dp) {
+// This function calculates the eccentric anomaly which is used to calculate the position of the planet on its orbit
+// it returns an angle which is used in the plotPlanets function to calculate the x and y coordinates
+// go here to learn more: https://www.johndcook.com/blog/2022/10/22/orbital-anomalies/
+function eccentricAnomaly(ec,m,dp) {
     // arguments:
-    // ec=eccentricity, m=mean anomaly,
-    // dp=number of decimal places
+    // ec = eccentricity, m = mean anomaly,
+    // dp = number of decimal places
 
-    let pi = Math.PI, K = pi / 180.0;
-    let maxIter = 30, i = 0;
-    let delta=Math.pow(10,-dp);
-    let E, F;
+    let pi = Math.PI, K = pi / 180.0; // defines pi and one degree (K)
+    let maxIter = 30, i = 0; // max iter is set to limit the number of iterations for the calculation of E
+    let delta = Math.pow(10, -dp);
+    let E, F; // E means the eccentric anomaly and F is the true anomaly
 
+    // all part of a weird formula
     m = m / 360.0;
     m = 2.0 * pi * (m - Math.floor(m));
 
-    if (ec<0.8) E=m; else E=pi;
+    if (ec < 0.8) E = m; else E = pi;
 
-    F = E - ec*Math.sin(m) - m;
+    F = E - ec * Math.sin(m) - m;
 
-    while ((Math.abs(F)>delta) && (i<maxIter)) {
-        E = E - F/(1.0-ec*Math.cos(E));
-        F = E - ec*Math.sin(E) - m;
+    // iterates until the approximation of the eccentric anomaly is good
+    while ((Math.abs(F) > delta) && (i < maxIter)) {
+        E = E - F / (1.0-ec*Math.cos(E));
+        F = E - ec * Math.sin(E) - m;
         i = i + 1;
     }
-    E = E / K;
-    return Math.round(E*Math.pow(10,dp))/Math.pow(10,dp);
-}
-
-function toRadians_Elements(deg){
-    return deg * (Math.PI / 180);
-}
-
-function round_Elements(value, decimals) {
-    return Number(Math.round(value + 'e' + decimals)+ 'e- ' + decimals);
+    E /= K; // divides by K to get degrees
+    return Math.round(E * Math.pow(10, dp)) / Math.pow(10, dp); // more weird formula
 }
