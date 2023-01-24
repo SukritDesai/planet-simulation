@@ -385,19 +385,19 @@
             //planet center
             let pixelY;
             //planet center
-            for (let index = nPlanets; celestialBodySimulator >= 0; celestialBodySimulator--) {
-                pixelX = theCanvas.width / 2 + (planet[celestialBodySimulator].x - centerX) / metersPerPixel;
-                pixelY = theCanvas.height / 2 - 40 - (planet[celestialBodySimulator].y - centerY) / metersPerPixel;
+            for (let index = nPlanets; index >= 0; index--) {
+                pixelX = theCanvas.width / 2 + (planet[index].x - centerX) / metersPerPixel;
+                pixelY = theCanvas.height / 2 - 40 - (planet[index].y - centerY) / metersPerPixel;
                 theContext.beginPath();
-                theContext.arc(pixelX, pixelY, planet[celestialBodySimulator].radius, 0, 2 * Math.PI);
+                theContext.arc(pixelX, pixelY, planet[index].radius, 0, 2 * Math.PI);
                 //draws planet
-                theGradient = theContext.createRadialGradient(pixelX - 1, pixelY - 2, 1, pixelX, pixelY, planet[celestialBodySimulator].radius);
-                theGradient.addColorStop(0, planet[celestialBodySimulator].gradient0);
-                theGradient.addColorStop(1, planet[celestialBodySimulator].gradient1);
+                theGradient = theContext.createRadialGradient(pixelX - 1, pixelY - 2, 1, pixelX, pixelY, planet[index].radius);
+                theGradient.addColorStop(0, planet[index].gradient0);
+                theGradient.addColorStop(1, planet[index].gradient1);
                 theContext.fillStyle = theGradient;
                 theContext.fill();
                 //ads gradient for planet
-                trailContext.fillStyle = planet[celestialBodySimulator].trailColor;
+                trailContext.fillStyle = planet[index].trailColor;
                 //gives trail
                 trailContext.fillRect(pixelX - 0.5, pixelY - 0.5, 1, 1);
             }
